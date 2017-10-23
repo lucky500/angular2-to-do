@@ -1,0 +1,20 @@
+{
+  "name": "angular2-to-do",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Luciano Oliveira <luciano101@msn.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
