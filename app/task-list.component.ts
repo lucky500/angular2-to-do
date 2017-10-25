@@ -1,22 +1,42 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Task } from './task.model';
 
 @Component({
   selector: 'task-list',
   template: `
+  <select (change)="onChange($event.target.value)">
+    <option value="allTasks">All Tasks</option>
+    <option value="completedTasks">Completed Tasks</option>
+    <option value="incompleteTasks" selected="selected">Incomplete Tasks</option>
+  </select>
   <ul>
-    <li [class]="priorityColor(currentTask)" (click)="isDone(currentTask)" *ngFor="let currentTask of tasks">{{currentTask.description}}
-    <button (click)="editTask(currentTask)">Edit</button></li>
+    <li (click)="isDone(currentTask)" *ngFor="let currentTask of childTaskList | completeness:filterByCompleteness">{{currentTask.description}}{{currentTask.priority}}
+      <input *ngIf="currentTask.done === true" type="checkbox" checked (click)="toggleDone(currentTask, false)" />
+      <input *ngIf="currentTask.done === false" type="checkbox" (click)="toggleDone(currentTask, true)" />
+      <button (click)="editButtonHasBeenClicked(currentTask)">Edit!</button>
+    </li>
   </ul>
   `
 })
 
 export class TaskListComponent {
-  tasks: Task[] = [
-    new Task("Do Angular2 Tour of Heros Example", 3),
-    new Task('Begin brainstorming possible JavaScript group projects', 2),
-    new Task('Add README file to last few Angular repos on GitHub', 2)
-  ];
+  @Input() childTaskList: Task[];
+  @Output() clickSender = new EventEmitter();
+
+  filterByCompleteness: string = "incompleteTasks";
+
+  onChange(optionFromMenu){
+    this.filterByCompleteness = optionFromMenu;
+  }
+
+  toggleDone(clickedTask: Task, setCompleteness: boolean){
+    clickedTask.done = setCompleteness;
+  }
+
+  editButtonHasBeenClicked(taskToEdit: Task) {
+     this.clickSender.emit(taskToEdit);
+   }
+
   isDone(clickedTask: Task){
     if(clickedTask.done === true){
       alert("This task is done!");

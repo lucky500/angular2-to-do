@@ -8,19 +8,11 @@ import { Task } from './task.model';
   <div class="container">
     <h1>To Do App {{month}}/{{day}}/{{year}}</h1>
     <h4>{{currentFocus}}</h4>
-    <task-list></task-list>
-    <div *ngIf="selectedTask">
-      <h3>{{selectedTask.description}}</h3>
-      <p>Task Complete? {{selectedTask.done}}</p>
-      <h3>Edit Task</h3>
-      <label>Enter Task Desciption:</label>
-      <input [(ngModel)]="selectedTask.description">
-      <label>Enter Task Priority (1-3):</label>
-      <br>
-      <input type="radio" [(ngModel)]="selectedTask.priority" [value]="1">1 (Low Priority)<br>
-      <input type="radio"[(ngModel)]="selectedTask.priority" [value]="2">2 (Medium Priority)<br>
-      <input type="radio" [(ngModel)]="selectedTask.priority" [value]="3"> 3 (High Priority)
-      <button (click)="finishedEditing()">Done</button>
+    <task-list [childTaskList]="masterTaskList" (clickSender)="editTask($event)"></task-list>
+    <hr>
+    <edit-task [childSelectedTask]="selectedTask" (doneButtonClickedSender)="finishedEditing()">
+    </edit-task>
+    <new-task (newTaskSender)="addTask($event)"></new-task>
   </div>
   `
 })
@@ -33,6 +25,12 @@ export class AppComponent {
   year:  number  = this.currentTime.getFullYear();
   selectedTask = null;
 
+  masterTaskList: Task[] = [
+    new Task("Do Angular2 Tour of Heros Example", 3),
+    new Task('Begin brainstorming possible JavaScript group projects', 2),
+    new Task('Add README file to last few Angular repos on GitHub', 2)
+  ];
+
   editTask(clickedTask){
     this.selectedTask = clickedTask;
   }
@@ -40,4 +38,9 @@ export class AppComponent {
   finishedEditing(){
     this.selectedTask = null;
   }
+
+  addTask(newTaskFromChild: Task){
+    this.masterTaskList.push(newTaskFromChild);
+  }
+
 }
